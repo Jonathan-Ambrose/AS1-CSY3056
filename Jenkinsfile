@@ -16,8 +16,8 @@ pipeline {
         // Prepares the release artifact by zipping the source code into a dist folder
         stage('Package Release') {
             steps {
-                bat 'mkdir dist'
-                bat 'tar -a -c -f dist/release-v1.zip src/'
+                bat 'if not exist dist mkdir dist'
+                bat 'powershell Compress-Archive -Path src -DestinationPath dist/release-v1.zip -Force'
             }
         }
         // Archives the generated artifact so it can be downloaded from the Jenkins UI
