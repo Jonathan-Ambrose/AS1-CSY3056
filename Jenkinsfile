@@ -1,18 +1,35 @@
 pipeline {
     agent any
-
     stages {
-        stage('Hello Jenkins') {
+        // Installs required Python dependencies for the pipeline environment.
+        stage('Setup') {
             steps {
-                echo 'Hello from the CSY3056 AS1 Jenkins scaffold.'
-                echo 'This Jenkinsfile is only a starting point.'
-                echo 'You must adapt it to install dependencies, run pytest, and support your CI/CD evidence.'
+                bat 'python -m pip install -r requirements.txt'
             }
         }
-
-        stage('Check Workspace') {
+        // Runs unit tests. The pipeline will fail immediately if any test fails.
+        stage('Validate Application') {
             steps {
-                bat 'dir'
+                bat 'python -m pytest tests/'
+            }
+        }
+        // Prepares the release artifact by zipping the source code into a dist folder
+        stage('Package Release') {
+            steps {
+                bat 'mkdir dist'
+                bat 'tar -a -c -f dist/release-v1.zip src/'
+            }
+        }
+        // Archives the generated artifact so it can be downloaded from the Jenkins UI
+        stage('Archive Release') {
+            steps {
+                archiveArtifacts artifacts: 'dist/*.zip', fingerprint: true
+            }
+        }
+        // Validates that the Docker image builds successfully
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t vehicle-valuation:latest .'
             }
         }
     }
