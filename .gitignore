@@ -1,0 +1,3 @@
+# Files to ignore in the git repository
+__pycache__/
+.pytest_cache/
