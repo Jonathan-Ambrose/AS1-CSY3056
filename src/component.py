@@ -13,18 +13,19 @@ def calculate_valuation(base_price: Decimal, mileage: int, year: int) -> Decimal
         logging.error("Mileage below zero.")
         raise ValueError("Invalid mileage")
 
+    valuation = base_price
     
     # Boundary rule: If vehicle is older than 2010, a 50% penalty is applied.    
     if year < 2010:
         logging.warning("Older vehicle detected. Applying penalty of 50%.")
-        return round(base_price * Decimal("0.50"), 2)
+        valuation = valuation * Decimal("0.50")
 
     # If mileage is greater than 50,000 miles, a 10% penalty is applied.    
     if mileage > 50000:
         logging.warning("Higher mileage detected. Applying penalty of 10%.")
-        return round(base_price * Decimal("0.90"), 2)
+        valuation = valuation * Decimal ("0.90")
         
-    return round(base_price, 2)
+    return round(valuation, 2)
 
 # Function to calculate the total cost of a fleet
 def valuate_fleet(vehicles):
